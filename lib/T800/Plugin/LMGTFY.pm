@@ -4,26 +4,25 @@ use Moose;
 use URI::Escape::XS qw(uri_escape);
 
 with 'T800::Role::Plugin';
-with 'T800::Role::MessageReceiver';
+with 'T800::Role::PluginCommands';
+with 'T800::Role::Initialization';
 with 'T800::Role::IRCHandler';
 
 
-sub BUILD { shift->name('lmgtfy') }
+sub BUILD {
+    my $self = shift; 
+    $self->name('lmgtfy');
+    $self->add_command('_default' => 'lmgtfy');
+}
 
-sub on_privmsg {
+sub lmgtfy {
     my ($self, $who, $where, $what) = @_;
-    return unless $what;
-
-    my ($cmd, $params) = split ' ', $what, 2;
-    if ($cmd eq $self->core->config->trigger . 'lmgtfy') {
+    my ($nick, $params) = split ' ', $what, 2;
 	
 	my $channel = $where->[0];
-	
-	print $params . "\n";
-	my $message = "https://google.com/?q=" . uri_escape($params) ;
+	my $message = "$nick: https://google.com/?q=" . uri_escape($params) ;
 
 	$self->irc->yield(privmsg => $channel => $message);
-    }
 }
 
 __PACKAGE__->meta->make_immutable;

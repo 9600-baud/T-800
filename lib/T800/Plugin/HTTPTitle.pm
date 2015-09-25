@@ -24,6 +24,7 @@ sub on_privmsg {
 	my $ua = Mojo::UserAgent->new;
 	my @message = (split / /, $what);
 	my $urlcount = 0;
+	return unless $channel ne "#mainehackerclub";
 	foreach (@message) {
 		if (is_web_uri($_)) {   
                         $urlcount++;
