@@ -79,7 +79,7 @@ sub on_poco_irc_353 {
     $self->plugin_dispatch(
 	role => 'SpecialMessages',
 	call => 'on_353',
-	args => [$channel, \@names],,
+	args => [$channel, \@names],
 	);
 }
 
@@ -88,10 +88,18 @@ sub on_poco_irc_001 {
 
     print "Connected.\n";
 
+    $self->plugin_dispatch(
+        role => 'SpecialMessages',
+        call => 'on_001',
+	args => [],
+        );
+
     foreach my $channel ( @{ $self->config->{'channels'} } ) {
 	$self->irc->yield( join => $channel );
 	print "Joining channel: $channel\n";
     }
+
+
 }
 
 sub on_poco_irc_msg {
@@ -102,7 +110,6 @@ sub on_poco_irc_msg {
 sub on_poco_irc_public {
     my ($self, $event) = @_;
     my ($who, $where, $what) = @{$event->args}[0 .. 2];
-
     # Some plugins want to see everything:
     $self->plugin_dispatch(
 	role    => 'MessageReceiver',
