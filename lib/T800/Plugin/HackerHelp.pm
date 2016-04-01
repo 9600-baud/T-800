@@ -27,11 +27,13 @@ sub on_privmsg {
         $self->irc->yield('privmsg', $channel, "I do apologize, but we need more information than just the word 'help'. We are a group of technology enthusiasts. We do not condone any illegal activities, such as 'cracking' and 'exploiting' systems. If you wish to learn about what we do, you can visit http://www.hackmaine.org/");
         $self->timeout(0);
         POE::Session->create(
-            _start => sub {
-                $_[KERNEL]->alarm( resetto => time() + 300, 0 );
-            },
-            resetto => sub {
-                $self->timeout(1);
+            inline_states => {
+                _start => sub {
+                    $_[KERNEL]->alarm( resetto => time() + 300, 0 );
+                },
+                resetto => sub {
+                    $self->timeout(1);
+                },
             }
         );
     }
