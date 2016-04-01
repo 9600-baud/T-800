@@ -29,7 +29,7 @@ sub on_privmsg {
         POE::Session->create(
             _start => sub {
                 $_[KERNEL]->alarm( resetto => time() + 300, 0 );
-            }
+            },
             resetto => sub {
                 $self->timeout = 1;
             }
